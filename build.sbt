@@ -1,6 +1,8 @@
 val circeVersion = "0.7.0"
 
 lazy val commonSettings = Seq(
+  sonatypeProfileName := "com.github.j5ik2o",
+  organization := "com.github.j5ik2o",
   scalaVersion := "2.12.1",
   crossScalaVersions := Seq("2.11.8", "2.12.1"),
   scalacOptions ++= Seq(
