@@ -24,6 +24,8 @@ libraryDependencies += "com.github.j5ik2o" %% "scala-rakuten-item-search-api" % 
 
 ## Usage
 
+The supported API is Item Search API only. Please refer to the following code.
+
 ```scala
 import scala.concurrent.duration._
 
