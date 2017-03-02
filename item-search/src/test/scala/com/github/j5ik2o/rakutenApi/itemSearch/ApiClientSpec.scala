@@ -23,7 +23,7 @@ class ApiClientSpec extends TestKit(ActorSystem("ApiClientSpec"))
       )
 
       val client = new RakutenItemSearchAPI(config)
-      val result = client.search(
+      val result = client.searchItems(
         keyword = Some("楽天"),
         //genreId = Some(559887),
         genreInformationFlag = Some(true)

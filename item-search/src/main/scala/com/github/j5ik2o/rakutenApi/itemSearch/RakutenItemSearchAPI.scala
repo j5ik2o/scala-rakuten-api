@@ -17,6 +17,7 @@ case class ItemSearchException(message: String, cause: Throwable)
   extends Exception(message, cause)
 
 class RakutenItemSearchAPI(apiConfig: RakutenItemSearchAPIConfig)(implicit system: ActorSystem) extends LazyLogging {
+
   private implicit val materializer = ActorMaterializer()
 
   import system.dispatcher
@@ -24,7 +25,7 @@ class RakutenItemSearchAPI(apiConfig: RakutenItemSearchAPIConfig)(implicit syste
   private val poolClientFlow = Http().cachedHostConnectionPoolHttps[Int](apiConfig.endPoint, 443)
   private val timeout: FiniteDuration = apiConfig.timeoutForToStrict
 
-  def search(
+  def searchItems(
     keyword: Option[String] = None,
     shopCode: Option[String] = None,
     itemCode: Option[String] = None,
@@ -60,9 +61,9 @@ class RakutenItemSearchAPI(apiConfig: RakutenItemSearchAPIConfig)(implicit syste
     genreInformationFlag: Option[Boolean] = None,
     tagInformationFlag: Option[Boolean] = None
   ): Future[ItemSearchResult] = {
-    val affiliateIdParams = apiConfig.affiliateId.cata(e => s"&affiliateId=$e", "")
-    val callbackParams = apiConfig.callback.cata(e => s"&callback=$e", "")
-    val formatVersionParams = apiConfig.formatVersion.cata(e => s"&formatVersion=$e", "")
+    val affiliateIdParams = apiConfig.affiliateId.fold("")(e => s"&affiliateId=$e")
+    val callbackParams = apiConfig.callback.fold("")(e => s"&callback=$e")
+    val formatVersionParams = apiConfig.formatVersion.fold("")(e => s"&formatVersion=$e")
     val keywordParams = keyword.map(e => URLEncoder.encode(e, "UTF-8")).fold("")(e => s"&keyword=$e")
     val shopCodeParams = shopCode.fold("")(e => s"&shopCode=$e")
     val itemCodeParams = itemCode.fold("")(e => s"&itemCode=$e")
@@ -100,7 +101,7 @@ class RakutenItemSearchAPI(apiConfig: RakutenItemSearchAPIConfig)(implicit syste
     val url = Seq(
       "/services/api/IchibaItem/Search/20140222?format=json", s"&applicationId=${apiConfig.applicationId}", affiliateIdParams, callbackParams, formatVersionParams, keywordParams, shopCodeParams, itemCodeParams, genreIdParams, tagIdParams, hitsParams, pageParams, sortParams, minPriceParams, maxPriceParams, availabilityParams, fieldParams, carrierParams, imageFlagParams, orFlagParams, ngKeywordParams, purchaseTypeParams, shipOverseasFlagParams, shipOverseasAreaParams, asurakuFlagParams, asurakuAreaParams, pointRateFlagParams, pointRateParams, postageFlagParams, creditCardFlagParams, giftFlagParams, hasReviewFlagParams, maxAffiliateRateParams, minAffiliateRateParams, hasMovieFlagParams, pamphletFlagParams, appointDeliveryDateFlagParams, genreInformationFlagParams, tagInformationFlagParams
     ).mkString
-    logger.info("url = {}", url)
+    logger.debug("url = {}", url)
     val future = Source.single(HttpRequest(uri = url) -> 1).via(poolClientFlow).runWith(Sink.head)
     future.flatMap {
       case (triedResponse, _) =>

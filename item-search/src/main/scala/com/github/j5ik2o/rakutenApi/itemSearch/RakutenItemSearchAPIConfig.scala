@@ -7,8 +7,8 @@ case class RakutenItemSearchAPIConfig(
   endPoint: String,
   timeoutForToStrict: FiniteDuration,
   applicationId: String,
-  affiliateId: Maybe[String] = Maybe.empty,
-  callback: Maybe[String] = Maybe.empty,
-  formatVersion: Maybe[Int] = Maybe.just(1)
+  affiliateId: Option[String] = None,
+  callback: Option[String] = None,
+  formatVersion: Option[Int] = Some(1)
 )
 
