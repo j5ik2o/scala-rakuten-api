@@ -68,7 +68,7 @@ lazy val commonSettings = Seq(
 lazy val itemSearch = (project in file("item-search"))
   .settings(commonSettings)
   .settings(
-    name := "rakuten-item-search-api",
+    name := "scala-rakuten-item-search-api",
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http-testkit" % "10.0.2" % Test,
       "ch.qos.logback" % "logback-classic" % "1.2.1" % Test,
